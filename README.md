@@ -1,70 +1,110 @@
-# Getting Started with Create React App
+# FinTrack - Personal Finance Tracker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack personal finance management web application built with React.js frontend and Node.js/Express backend.
+
+## Project Structure
+
+```
+fintrack/
+├── src/
+│   ├── components/
+│   │   ├── Navbar.js           # Top navigation bar with logout
+│   │   ├── Sidebar.js          # Left sidebar with navigation
+│   │   └── PrivateRoute.js     # Protected route wrapper
+│   ├── pages/
+│   │   ├── Login.js            # Login page
+│   │   ├── Register.js         # Registration page
+│   │   ├── Dashboard.js        # Main dashboard
+│   │   ├── Transactions.js     # Transaction management
+│   │   └── Reports.js          # Financial reports
+│   ├── context/
+│   │   └── AuthContext.js      # Authentication context & state
+│   ├── utils/
+│   │   └── api.js              # Axios API client with interceptors
+│   ├── App.js                  # Main app component with routing
+│   ├── index.css               # Global styles & Tailwind directives
+│   └── index.js                # React entry point
+├── tailwind.config.js          # Tailwind CSS configuration
+├── postcss.config.js           # PostCSS configuration
+├── .env.local                  # Environment variables
+└── package.json                # Dependencies
+```
+
+## Tech Stack
+
+### Frontend
+- **React.js** - UI library
+- **React Router DOM v6** - Client-side routing
+- **Tailwind CSS** - Utility-first CSS framework
+- **Axios** - HTTP client for API calls
+- **Chart.js & react-chartjs-2** - Data visualization
+
+## Features
+
+### Authentication
+- ✅ User registration with validation
+- ✅ User login with JWT tokens
+- ✅ Protected routes (Private Route wrapper)
+- ✅ Automatic logout on token expiration
+- ✅ Local storage persistence
+
+### User Interface
+- ✅ Responsive Navbar with user info and logout
+- ✅ Collapsible Sidebar with navigation
+- ✅ Professional Tailwind CSS styling
+- ✅ Loading states and error handling
+
+### Pages
+- ✅ **Dashboard** - Overview of financial summary
+- ✅ **Transactions** - Add and view transactions
+- ✅ **Reports** - Financial analytics and reports
+- ✅ **Login** - Authentication page
+- ✅ **Register** - New user signup
+
+## Installation & Setup
+
+1. **Navigate to the project directory:**
+   ```bash
+   cd fintrack
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm start
+   ```
+
+The app will open at `http://localhost:3000`
 
 ## Available Scripts
 
-In the project directory, you can run:
+- **`npm start`** - Run development server
+- **`npm run build`** - Build for production
+- **`npm test`** - Run tests
+- **`npm run eject`** - Eject from Create React App (irreversible)
 
-### `npm start`
+## Configuration
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Environment Variables
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Edit `.env.local` to configure:
 
-### `npm test`
+```
+REACT_APP_API_URL=http://localhost:5000/api
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Next Steps
 
-### `npm run build`
+1. **Backend Setup** - Set up Node.js/Express server with authentication
+2. **Database** - Configure MongoDB and Mongoose models
+3. **API Integration** - Connect frontend to backend endpoints
+4. **Charts** - Implement data visualization with Chart.js
+5. **Features** - Add transaction filtering, categories, budgets
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## License
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT License - Feel free to use this project for learning purposes.
