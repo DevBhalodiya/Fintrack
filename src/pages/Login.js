@@ -1,17 +1,102 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import InputField from '../components/InputField';
+import Button from '../components/Button';
 import api from '../utils/api';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleTestLogin = () => {
+  // Validation logic
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      return 'Email is required';
+    }
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address';
+    }
+    return '';
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return 'Password is required';
+    }
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return '';
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    const emailError = validateEmail(formData.email);
+    if (emailError) newErrors.email = emailError;
+
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) newErrors.password = passwordError;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setApiError('');
+    setSuccessMessage('');
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Mock API call with demo data
+      // In production, this would call: await api.post('/auth/login', formData);
+      const response = await simulateLogin(formData.email, formData.password);
+      const { token, user } = response;
+      login(user, token);
+      setSuccessMessage('Login successful! Redirecting...');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
+    } catch (err) {
+      setApiError(err.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = () => {
     // Demo login for testing
     const testUser = { name: 'John Doe', email: 'john@example.com' };
     const testToken = 'demo-token-' + Date.now();
@@ -19,26 +104,10 @@ const Login = () => {
     navigate('/dashboard');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const response = await api.post('/auth/login', { email, password });
-      const { token, user } = response.data;
-      login(user, token);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center px-4 py-8">
       <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
+        {/* Logo and Title */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-white text-3xl font-bold">₹</span>
@@ -47,49 +116,57 @@ const Login = () => {
           <p className="text-gray-500 mt-2">Personal Finance Tracker</p>
         </div>
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+        {/* API Error Message */}
+        {apiError && (
+          <div className="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 rounded flex items-start">
+            <span className="mr-2">⚠</span>
+            <span>{apiError}</span>
           </div>
         )}
 
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded flex items-start">
+            <span className="mr-2">✓</span>
+            <span>{successMessage}</span>
+          </div>
+        )}
+
+        {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              placeholder="you@example.com"
-            />
-          </div>
+          <InputField
+            label="Email Address"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            error={errors.email}
+            placeholder="you@example.com"
+            required
+            autoComplete="email"
+          />
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              placeholder="••••••••"
-            />
-          </div>
+          <InputField
+            label="Password"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            placeholder="••••••••"
+            required
+            autoComplete="current-password"
+          />
 
-          <button
+          <Button
             type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-200 disabled:bg-gray-400"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
+            text="Login"
+            loading={loading}
+            variant="primary"
+            fullWidth
+          />
 
+          {/* Divider */}
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
@@ -99,15 +176,17 @@ const Login = () => {
             </div>
           </div>
 
-          <button
+          {/* Demo Button */}
+          <Button
             type="button"
-            onClick={handleTestLogin}
-            className="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition duration-200"
-          >
-            Demo Login (Test Dashboard)
-          </button>
+            text="Demo Login (Test Dashboard)"
+            onClick={handleDemoLogin}
+            variant="success"
+            fullWidth
+          />
         </form>
 
+        {/* Register Link */}
         <p className="text-center text-gray-600 mt-6">
           Don't have an account?{' '}
           <Link to="/register" className="text-blue-600 font-semibold hover:underline">
@@ -117,6 +196,25 @@ const Login = () => {
       </div>
     </div>
   );
+};
+
+// Mock login function (replace with actual API call in production)
+const simulateLogin = async (email, password) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (email === 'demo@example.com' && password === '123456') {
+        resolve({
+          token: 'mock-token-' + Date.now(),
+          user: { name: 'Demo User', email: email },
+        });
+      } else if (email && password) {
+        // Simulate a backend rejection
+        reject(new Error('Invalid email or password'));
+      } else {
+        reject(new Error('Please fill in all fields'));
+      }
+    }, 500);
+  });
 };
 
 export default Login;
