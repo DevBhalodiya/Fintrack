@@ -1,54 +1,144 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import InputField from '../components/InputField';
+import Button from '../components/Button';
 import api from '../utils/api';
 
 const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  // Validation logic
+  const validateName = (name) => {
+    if (!name) {
+      return 'Full name is required';
+    }
+    if (name.trim().length < 2) {
+      return 'Full name must be at least 2 characters';
+    }
+    if (name.length > 50) {
+      return 'Full name must not exceed 50 characters';
+    }
+    return '';
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      return 'Email is required';
+    }
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address';
+    }
+    return '';
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return 'Password is required';
+    }
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    if (password.length > 50) {
+      return 'Password must not exceed 50 characters';
+    }
+    return '';
+  };
+
+  const validateConfirmPassword = (confirmPassword, password) => {
+    if (!confirmPassword) {
+      return 'Please confirm your password';
+    }
+    if (confirmPassword !== password) {
+      return 'Passwords do not match';
+    }
+    return '';
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    const nameError = validateName(formData.name);
+    if (nameError) newErrors.name = nameError;
+
+    const emailError = validateEmail(formData.email);
+    if (emailError) newErrors.email = emailError;
+
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) newErrors.password = passwordError;
+
+    const confirmPasswordError = validateConfirmPassword(
+      formData.confirmPassword,
+      formData.password
+    );
+    if (confirmPasswordError) newErrors.confirmPassword = confirmPasswordError;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setApiError('');
+    setSuccessMessage('');
 
-    // Validation
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/register', {
-        name,
-        email,
-        password,
-      });
-      const { token, user } = response.data;
-      login(user, token);
-      navigate('/dashboard');
+      // Mock API call with demo data
+      // In production, this would call: await api.post('/auth/register', formData);
+      const response = await simulateRegister(
+        formData.name,
+        formData.email,
+        formData.password
+      );
+      setSuccessMessage('Registration successful! Redirecting to login...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      setApiError(err.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center px-4 py-8">
       <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
+        {/* Logo and Title */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-white text-3xl font-bold">₹</span>
@@ -57,78 +147,82 @@ const Register = () => {
           <p className="text-gray-500 mt-2">Create Your Account</p>
         </div>
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+        {/* API Error Message */}
+        {apiError && (
+          <div className="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 rounded flex items-start">
+            <span className="mr-2">⚠</span>
+            <span>{apiError}</span>
           </div>
         )}
 
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded flex items-start">
+            <span className="mr-2">✓</span>
+            <span>{successMessage}</span>
+          </div>
+        )}
+
+        {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Full Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              placeholder="John Doe"
-            />
-          </div>
+          <InputField
+            label="Full Name"
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            error={errors.name}
+            placeholder="John Doe"
+            required
+            autoComplete="name"
+          />
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              placeholder="you@example.com"
-            />
-          </div>
+          <InputField
+            label="Email Address"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            error={errors.email}
+            placeholder="you@example.com"
+            required
+            autoComplete="email"
+          />
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              placeholder="••••••••"
-            />
-          </div>
+          <InputField
+            label="Password"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            placeholder="••••••••"
+            required
+            autoComplete="new-password"
+          />
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              placeholder="••••••••"
-            />
-          </div>
+          <InputField
+            label="Confirm Password"
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            error={errors.confirmPassword}
+            placeholder="••••••••"
+            required
+            autoComplete="new-password"
+          />
 
-          <button
+          <Button
             type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-200 disabled:bg-gray-400"
-          >
-            {loading ? 'Creating Account...' : 'Register'}
-          </button>
+            text="Register"
+            loading={loading}
+            variant="primary"
+            fullWidth
+          />
         </form>
 
+        {/* Login Link */}
         <p className="text-center text-gray-600 mt-6">
           Already have an account?{' '}
           <Link to="/login" className="text-blue-600 font-semibold hover:underline">
@@ -138,6 +232,22 @@ const Register = () => {
       </div>
     </div>
   );
+};
+
+// Mock register function (replace with actual API call in production)
+const simulateRegister = async (name, email, password) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (email) {
+        resolve({
+          token: 'mock-token-' + Date.now(),
+          user: { name, email },
+        });
+      } else {
+        reject(new Error('Registration failed. Please try again.'));
+      }
+    }, 500);
+  });
 };
 
 export default Register;
