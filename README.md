@@ -100,7 +100,7 @@ REACT_APP_API_URL=http://localhost:5000/api
 ## Next Steps
 
 1. **Backend Setup** - Set up Node.js/Express server with authentication
-2. **Database** - Configure MongoDB and Mongoose models
+2. **Database** - Firebase firestore DB
 3. **API Integration** - Connect frontend to backend endpoints
 4. **Charts** - Implement data visualization with Chart.js
 5. **Features** - Add transaction filtering, categories, budgets
