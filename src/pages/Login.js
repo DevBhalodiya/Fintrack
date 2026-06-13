@@ -80,28 +80,38 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Mock API call with demo data
-      // In production, this would call: await api.post('/auth/login', formData);
-      const response = await simulateLogin(formData.email, formData.password);
-      const { token, user } = response;
-      login(user, token);
-      setSuccessMessage('Login successful! Redirecting...');
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 500);
+      // Call the actual backend API
+      const response = await api.post('/auth/login', {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.data.success) {
+        const { token, user } = response.data.data;
+        
+        // Save to localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // Update auth context
+        login(user, token);
+        
+        setSuccessMessage('Login successful! Redirecting...');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 500);
+      }
     } catch (err) {
-      setApiError(err.message || 'Login failed. Please try again.');
+      const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please try again.';
+      setApiError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDemoLogin = () => {
-    // Demo login for testing
-    const testUser = { name: 'John Doe', email: 'john@example.com' };
-    const testToken = 'demo-token-' + Date.now();
-    login(testUser, testToken);
-    navigate('/dashboard');
+    // Show notification that user should register/login with real credentials
+    alert('Please register first or login with your credentials. The demo feature is disabled as the app now uses real backend.');
   };
 
   return (
@@ -199,22 +209,5 @@ const Login = () => {
 };
 
 // Mock login function (replace with actual API call in production)
-const simulateLogin = async (email, password) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (email === 'demo@example.com' && password === '123456') {
-        resolve({
-          token: 'mock-token-' + Date.now(),
-          user: { name: 'Demo User', email: email },
-        });
-      } else if (email && password) {
-        // Simulate a backend rejection
-        reject(new Error('Invalid email or password'));
-      } else {
-        reject(new Error('Please fill in all fields'));
-      }
-    }, 500);
-  });
-};
 
 export default Login;

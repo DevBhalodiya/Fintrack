@@ -117,19 +117,29 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // Mock API call with demo data
-      // In production, this would call: await api.post('/auth/register', formData);
-      const response = await simulateRegister(
-        formData.name,
-        formData.email,
-        formData.password
-      );
-      setSuccessMessage('Registration successful! Redirecting to login...');
-      setTimeout(() => {
-        navigate('/login');
-      }, 1500);
+      // Call the actual backend API
+      const response = await api.post('/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.data.success) {
+        // Save token to localStorage
+        localStorage.setItem('token', response.data.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.data.user));
+        
+        // Update auth context
+        login(response.data.data.user, response.data.data.token);
+        
+        setSuccessMessage('Registration successful! Redirecting to login...');
+        setTimeout(() => {
+          navigate('/login');
+        }, 1500);
+      }
     } catch (err) {
-      setApiError(err.message || 'Registration failed. Please try again.');
+      const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
+      setApiError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -235,19 +245,5 @@ const Register = () => {
 };
 
 // Mock register function (replace with actual API call in production)
-const simulateRegister = async (name, email, password) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (email) {
-        resolve({
-          token: 'mock-token-' + Date.now(),
-          user: { name, email },
-        });
-      } else {
-        reject(new Error('Registration failed. Please try again.'));
-      }
-    }, 500);
-  });
-};
 
 export default Register;
