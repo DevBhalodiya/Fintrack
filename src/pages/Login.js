@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import InputField from '../components/InputField';
 import Button from '../components/Button';
-import api from '../utils/api';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +14,7 @@ const Login = () => {
   const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const { login } = useContext(AuthContext);
+  const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // Validation logic
@@ -80,29 +79,27 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Call the actual backend API
-      const response = await api.post('/auth/login', {
-        email: formData.email,
-        password: formData.password,
-      });
+      // Call Firebase loginUser service
+      await loginUser(formData.email, formData.password);
 
-      if (response.data.success) {
-        const { token, user } = response.data.data;
-        
-        // Save to localStorage
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
-        
-        // Update auth context
-        login(user, token);
-        
-        setSuccessMessage('Login successful! Redirecting...');
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 500);
-      }
+      setSuccessMessage('Login successful! Redirecting...');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please try again.';
+      console.error('Login error:', err);
+      let errorMessage = 'Login failed. Please try again.';
+      if (
+        err.code === 'auth/wrong-password' ||
+        err.code === 'auth/user-not-found' ||
+        err.code === 'auth/invalid-credential'
+      ) {
+        errorMessage = 'Invalid email or password.';
+      } else if (err.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
       setApiError(errorMessage);
     } finally {
       setLoading(false);
@@ -111,7 +108,7 @@ const Login = () => {
 
   const handleDemoLogin = () => {
     // Show notification that user should register/login with real credentials
-    alert('Please register first or login with your credentials. The demo feature is disabled as the app now uses real backend.');
+    alert('Please register first or login with your credentials. The demo feature is disabled as the app now uses real Firebase backend.');
   };
 
   return (
@@ -186,14 +183,7 @@ const Login = () => {
             </div>
           </div>
 
-          {/* Demo Button */}
-          <Button
-            type="button"
-            text="Demo Login (Test Dashboard)"
-            onClick={handleDemoLogin}
-            variant="success"
-            fullWidth
-          />
+
         </form>
 
         {/* Register Link */}
@@ -207,7 +197,5 @@ const Login = () => {
     </div>
   );
 };
-
-// Mock login function (replace with actual API call in production)
 
 export default Login;

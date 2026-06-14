@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import InputField from '../components/InputField';
 import Button from '../components/Button';
-import api from '../utils/api';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +16,7 @@ const Register = () => {
   const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const { login } = useContext(AuthContext);
+  const { registerUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // Validation logic
@@ -117,28 +116,25 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // Call the actual backend API
-      const response = await api.post('/auth/register', {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (response.data.success) {
-        // Save token to localStorage
-        localStorage.setItem('token', response.data.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.data.user));
-        
-        // Update auth context
-        login(response.data.data.user, response.data.data.token);
-        
-        setSuccessMessage('Registration successful! Redirecting to login...');
-        setTimeout(() => {
-          navigate('/login');
-        }, 1500);
-      }
+      // Call Firebase registerUser service
+      await registerUser(formData.name, formData.email, formData.password);
+      
+      setSuccessMessage('Registration successful! Redirecting to login...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
+      console.error('Registration error:', err);
+      let errorMessage = 'Registration failed. Please try again.';
+      if (err.code === 'auth/email-already-in-use') {
+        errorMessage = 'This email is already in use by another account.';
+      } else if (err.code === 'auth/weak-password') {
+        errorMessage = 'The password is too weak.';
+      } else if (err.code === 'auth/invalid-email') {
+        errorMessage = 'The email address is invalid.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
       setApiError(errorMessage);
     } finally {
       setLoading(false);
@@ -243,7 +239,5 @@ const Register = () => {
     </div>
   );
 };
-
-// Mock register function (replace with actual API call in production)
 
 export default Register;
