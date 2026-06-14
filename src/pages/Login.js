@@ -106,41 +106,42 @@ const Login = () => {
     }
   };
 
-  const handleDemoLogin = () => {
-    // Show notification that user should register/login with real credentials
-    alert('Please register first or login with your credentials. The demo feature is disabled as the app now uses real Firebase backend.');
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center px-4 py-8">
-      <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Dynamic Background Glowing Accents */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
+
+      {/* Login Card */}
+      <div className="backdrop-blur-md bg-slate-900/40 border border-slate-900 rounded-3xl shadow-2xl p-8 w-full max-w-md relative z-10">
+        
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-3xl font-bold">₹</span>
+          <div className="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20 animate-float">
+            <span className="text-white text-2xl font-black">₹</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-800">FinTrack</h1>
-          <p className="text-gray-500 mt-2">Personal Finance Tracker</p>
+          <h1 className="text-3xl font-bold text-white tracking-tight">FinTrack</h1>
+          <p className="text-slate-400 mt-2 text-sm">Sign in to manage your budget</p>
         </div>
 
         {/* API Error Message */}
         {apiError && (
-          <div className="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 rounded flex items-start">
-            <span className="mr-2">⚠</span>
+          <div className="mb-6 p-4 bg-rose-955/20 border-l-4 border-rose-500 text-rose-300 rounded-xl flex items-start text-sm backdrop-blur-sm">
+            <span className="mr-2.5 font-bold">⚠</span>
             <span>{apiError}</span>
           </div>
         )}
 
         {/* Success Message */}
         {successMessage && (
-          <div className="mb-4 p-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded flex items-start">
-            <span className="mr-2">✓</span>
+          <div className="mb-6 p-4 bg-emerald-955/20 border-l-4 border-emerald-500 text-emerald-300 rounded-xl flex items-start text-sm backdrop-blur-sm">
+            <span className="mr-2.5 font-bold">✓</span>
             <span>{successMessage}</span>
           </div>
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <InputField
             label="Email Address"
             type="email"
@@ -172,24 +173,12 @@ const Login = () => {
             variant="primary"
             fullWidth
           />
-
-          {/* Divider */}
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">or</span>
-            </div>
-          </div>
-
-
         </form>
 
         {/* Register Link */}
-        <p className="text-center text-gray-600 mt-6">
+        <p className="text-center text-slate-400 mt-8 text-sm">
           Don't have an account?{' '}
-          <Link to="/register" className="text-blue-600 font-semibold hover:underline">
+          <Link to="/register" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors hover:underline">
             Register here
           </Link>
         </p>

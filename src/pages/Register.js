@@ -118,7 +118,7 @@ const Register = () => {
     try {
       // Call Firebase registerUser service
       await registerUser(formData.name, formData.email, formData.password);
-      
+
       setSuccessMessage('Registration successful! Redirecting to login...');
       setTimeout(() => {
         navigate('/login');
@@ -142,29 +142,35 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center px-4 py-8">
-      <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
-        {/* Logo and Title */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-3xl font-bold">₹</span>
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Background Glowing Blur Circles */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
+
+      {/* Register Card */}
+      <div className="backdrop-blur-md bg-slate-900/40 border border-slate-900 rounded-3xl shadow-2xl p-8 w-full max-w-md relative z-10">
+        
+        {/* Title */}
+        <div className="text-center mb-6">
+          <div className="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20 animate-float">
+            <span className="text-white text-2xl font-black">₹</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-800">FinTrack</h1>
-          <p className="text-gray-500 mt-2">Create Your Account</p>
+          <h1 className="text-3xl font-bold text-white tracking-tight">Create Account</h1>
+          <p className="text-slate-400 mt-2 text-sm">Join FinTrack to manage budgets</p>
         </div>
 
         {/* API Error Message */}
         {apiError && (
-          <div className="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 rounded flex items-start">
-            <span className="mr-2">⚠</span>
+          <div className="mb-6 p-4 bg-rose-955/20 border-l-4 border-rose-500 text-rose-300 rounded-xl flex items-start text-sm backdrop-blur-sm">
+            <span className="mr-2.5 font-bold">⚠</span>
             <span>{apiError}</span>
           </div>
         )}
 
         {/* Success Message */}
         {successMessage && (
-          <div className="mb-4 p-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded flex items-start">
-            <span className="mr-2">✓</span>
+          <div className="mb-6 p-4 bg-emerald-955/20 border-l-4 border-emerald-500 text-emerald-300 rounded-xl flex items-start text-sm backdrop-blur-sm">
+            <span className="mr-2.5 font-bold">✓</span>
             <span>{successMessage}</span>
           </div>
         )}
@@ -229,9 +235,9 @@ const Register = () => {
         </form>
 
         {/* Login Link */}
-        <p className="text-center text-gray-600 mt-6">
+        <p className="text-center text-slate-400 mt-6 text-sm">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 font-semibold hover:underline">
+          <Link to="/login" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors hover:underline">
             Login here
           </Link>
         </p>

@@ -11,14 +11,14 @@ const Button = ({
   fullWidth = true,
 }) => {
   const baseStyles =
-    'font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2';
+    'font-semibold py-2.5 px-5 rounded-xl transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 transform hover:-translate-y-0.5 active:translate-y-0 shadow-lg cursor-pointer';
 
   const variantStyles = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-gray-400',
+    primary: 'bg-gradient-to-r from-indigo-650 to-violet-650 hover:from-indigo-550 hover:to-violet-550 text-white shadow-indigo-500/10 hover:shadow-indigo-500/20 focus:ring-indigo-500 disabled:opacity-50 disabled:pointer-events-none',
     secondary:
-      'bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-400 disabled:bg-gray-300',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 disabled:bg-gray-400',
-    success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 disabled:bg-gray-400',
+      'bg-slate-900/60 text-slate-300 hover:bg-slate-800/80 hover:text-white border border-slate-800 focus:ring-slate-500 disabled:opacity-50 disabled:pointer-events-none',
+    danger: 'bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-550 hover:to-red-550 text-white shadow-rose-500/10 hover:shadow-rose-500/20 focus:ring-rose-500 disabled:opacity-50 disabled:pointer-events-none',
+    success: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-550 hover:to-teal-550 text-white shadow-emerald-500/10 hover:shadow-emerald-500/20 focus:ring-emerald-500 disabled:opacity-50 disabled:pointer-events-none',
   };
 
   const widthStyle = fullWidth ? 'w-full' : '';

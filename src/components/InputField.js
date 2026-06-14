@@ -17,10 +17,10 @@ const InputField = ({
   const inputType = isPasswordType && showPassword ? 'text' : type;
 
   return (
-    <div className="mb-4">
-      <label className="block text-gray-700 font-semibold mb-2">
+    <div className="mb-5">
+      <label className="block text-slate-350 font-semibold mb-2 text-sm tracking-wide">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-rose-500 ml-1">*</span>}
       </label>
       <div className="relative">
         <input
@@ -30,17 +30,17 @@ const InputField = ({
           onChange={onChange}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className={`w-full px-4 py-2 border rounded-lg focus:outline-none transition-colors ${
+          className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none transition-all duration-200 text-slate-100 placeholder-slate-500 ${
             error
-              ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 bg-red-50'
-              : 'border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+              ? 'border-rose-500/60 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 bg-rose-950/10'
+              : 'border-slate-800 bg-slate-900/40 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
           }`}
         />
         {isPasswordType && (
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-3 text-gray-500 hover:text-gray-700 focus:outline-none transition-colors"
+            className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-200 focus:outline-none transition-colors"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? (
@@ -82,7 +82,7 @@ const InputField = ({
         )}
       </div>
       {error && (
-        <p className="text-red-500 text-sm mt-1 flex items-center">
+        <p className="text-rose-400 text-xs mt-1.5 flex items-center font-medium">
           <span className="mr-1">✕</span>
           {error}
         </p>

@@ -125,16 +125,16 @@ const Reports = () => {
 
   // Chart Configuration
   const backgroundColors = [
-    '#3B82F6', // Blue
-    '#EF4444', // Red
-    '#10B981', // Green
-    '#F59E0B', // Yellow
-    '#8B5CF6', // Purple
-    '#EC4899', // Pink
-    '#06B6D4', // Cyan
-    '#F97316', // Orange
-    '#14B8A6', // Teal
-    '#6366F1'  // Indigo
+    '#6366f1', // Indigo
+    '#f43f5e', // Rose
+    '#10b981', // Emerald
+    '#eab308', // Amber
+    '#8b5cf6', // Violet
+    '#ec4899', // Pink
+    '#06b6d4', // Cyan
+    '#f97316', // Orange
+    '#14b8a6', // Teal
+    '#4f46e5'  // Blue
   ];
 
   // Doughnut chart data (Expense or Income breakdown)
@@ -147,7 +147,7 @@ const Reports = () => {
       {
         data: doughnutValues,
         backgroundColor: backgroundColors.slice(0, doughnutLabels.length),
-        borderColor: '#ffffff',
+        borderColor: '#0f172a',
         borderWidth: 2,
       }
     ]
@@ -160,11 +160,25 @@ const Reports = () => {
       legend: {
         position: 'bottom',
         labels: {
-          boxWidth: 12,
+          boxWidth: 10,
+          color: '#94a3b8',
           padding: 15,
+          font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' }
         }
+      },
+      tooltip: {
+        backgroundColor: '#0f172a',
+        borderColor: '#1e293b',
+        borderWidth: 1,
+        titleColor: '#ffffff',
+        titleFont: { family: 'Plus Jakarta Sans', weight: 'bold' },
+        bodyColor: '#cbd5e1',
+        bodyFont: { family: 'Plus Jakarta Sans' },
+        padding: 10,
+        boxPadding: 6,
       }
-    }
+    },
+    cutout: '70%',
   };
 
   // Bar chart data (Summary comparison)
@@ -174,10 +188,10 @@ const Reports = () => {
       {
         label: 'Amount (₹)',
         data: [totalIncome, totalExpenses],
-        backgroundColor: ['rgba(16, 185, 129, 0.85)', 'rgba(239, 68, 68, 0.85)'],
-        borderColor: ['#10B981', '#EF4444'],
-        borderWidth: 1,
-        borderRadius: 6,
+        backgroundColor: ['rgba(16, 185, 129, 0.75)', 'rgba(244, 63, 94, 0.75)'],
+        borderColor: ['#10b981', '#f43f5e'],
+        borderWidth: 1.5,
+        borderRadius: 8,
       }
     ]
   };
@@ -188,75 +202,97 @@ const Reports = () => {
     plugins: {
       legend: {
         display: false
+      },
+      tooltip: {
+        backgroundColor: '#0f172a',
+        borderColor: '#1e293b',
+        borderWidth: 1,
+        titleColor: '#ffffff',
+        titleFont: { family: 'Plus Jakarta Sans', weight: 'bold' },
+        bodyColor: '#cbd5e1',
+        bodyFont: { family: 'Plus Jakarta Sans' },
+        padding: 10,
+        boxPadding: 6,
       }
     },
     scales: {
       y: {
         beginAtZero: true,
         grid: {
-          color: '#F3F4F6'
+          color: 'rgba(255, 255, 255, 0.05)'
+        },
+        ticks: {
+          color: '#94a3b8',
+          font: { family: 'Plus Jakarta Sans', size: 10 }
         }
       },
       x: {
         grid: {
           display: false
+        },
+        ticks: {
+          color: '#94a3b8',
+          font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' }
         }
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-950 text-slate-100">
       <Navbar />
       <div className="flex pt-16">
         <Sidebar />
-        <main className="flex-1 ml-20 p-8 transition-all duration-300">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">Reports</h1>
-            <p className="text-gray-600 mb-8">
-              Analyze your spending and income trends over time.
+        <main className="flex-1 ml-20 p-8 transition-all duration-300 relative overflow-hidden">
+          {/* Subtle page background glows */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="max-w-7xl mx-auto relative z-10">
+            <h1 className="text-3xl font-extrabold text-white tracking-tight">Reports</h1>
+            <p className="text-slate-400 mt-1.5 text-sm mb-8">
+              Analyze your patterns, balance, and categorization distributions over time.
             </p>
 
             {error && (
-              <div className="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded shadow-sm">
+              <div className="mb-6 p-4 bg-rose-955/20 border-l-4 border-rose-500 text-rose-300 rounded-xl text-sm backdrop-blur-sm">
                 {error}
               </div>
             )}
 
             {/* Filter Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Filter Reports</h2>
+            <div className="glass-panel p-6 rounded-2xl mb-8">
+              <h2 className="text-lg font-bold text-white tracking-tight mb-4">Filter Reports</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2 text-sm">
+                  <label className="block text-slate-350 font-semibold mb-2 text-xs uppercase tracking-widest">
                     Report Type
                   </label>
                   <select 
                     value={reportType}
                     onChange={(e) => setReportType(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-250 rounded-lg focus:outline-none focus:border-blue-500 bg-white"
+                    className="w-full px-4 py-2.5 border border-slate-800 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-slate-900/40 text-slate-100 text-sm cursor-pointer"
                   >
-                    <option value="expense">Expense Report</option>
-                    <option value="income">Income Report</option>
-                    <option value="summary">Summary Report (Income vs Expense)</option>
+                    <option className="bg-slate-950 text-slate-200" value="expense">Expense Report</option>
+                    <option className="bg-slate-950 text-slate-200" value="income">Income Report</option>
+                    <option className="bg-slate-950 text-slate-200" value="summary">Summary Report (Income vs Expense)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2 text-sm">
+                  <label className="block text-slate-350 font-semibold mb-2 text-xs uppercase tracking-widest">
                     Time Period
                   </label>
                   <select 
                     value={timePeriod}
                     onChange={(e) => setTimePeriod(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-250 rounded-lg focus:outline-none focus:border-blue-500 bg-white"
+                    className="w-full px-4 py-2.5 border border-slate-800 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-slate-900/40 text-slate-100 text-sm cursor-pointer"
                   >
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
-                    <option value="quarter">This Quarter (90 Days)</option>
-                    <option value="year">This Year</option>
-                    <option value="all">All Time</option>
+                    <option className="bg-slate-950 text-slate-200" value="week">This Week</option>
+                    <option className="bg-slate-950 text-slate-200" value="month">This Month</option>
+                    <option className="bg-slate-950 text-slate-200" value="quarter">This Quarter (90 Days)</option>
+                    <option className="bg-slate-950 text-slate-200" value="year">This Year</option>
+                    <option className="bg-slate-950 text-slate-200" value="all">All Time</option>
                   </select>
                 </div>
               </div>
@@ -264,8 +300,8 @@ const Reports = () => {
 
             {loading ? (
               <div className="flex flex-col justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-                <p className="mt-4 text-gray-500 font-medium">Analyzing transaction data...</p>
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-500"></div>
+                <p className="mt-4 text-slate-400 font-medium text-sm">Analyzing transaction data...</p>
               </div>
             ) : (
               <>
@@ -273,13 +309,13 @@ const Reports = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                   {/* Expense / Income Breakdown Chart */}
                   {reportType !== 'summary' && (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col min-h-[350px]">
-                      <h2 className="text-xl font-bold text-gray-800 mb-6 capitalize">{reportType} Breakdown</h2>
+                    <div className="glass-panel p-6 rounded-2xl flex flex-col min-h-[350px]">
+                      <h2 className="text-lg font-bold text-white tracking-tight mb-6 capitalize">{reportType} Breakdown</h2>
                       {categoryBreakdown.length === 0 ? (
-                        <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-500">
-                          <span className="text-4xl block mb-2">📊</span>
-                          <p>No data found for this period.</p>
-                          <p className="text-xs text-gray-400 mt-1">Try changing filters or adding transactions.</p>
+                        <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-500 py-16 border border-dashed border-slate-800/80 rounded-2xl bg-slate-900/10">
+                          <span className="text-3xl block mb-2">📊</span>
+                          <p className="text-sm">No details found for this period.</p>
+                          <p className="text-3xs text-slate-650 mt-1">Try switching filters or logging data.</p>
                         </div>
                       ) : (
                         <div className="flex-1 relative min-h-[220px]">
@@ -291,13 +327,13 @@ const Reports = () => {
 
                   {/* Summary Comparison Chart */}
                   {reportType === 'summary' && (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col min-h-[350px]">
-                      <h2 className="text-xl font-bold text-gray-800 mb-6">Income vs Expense Summary</h2>
+                    <div className="glass-panel p-6 rounded-2xl flex flex-col min-h-[350px]">
+                      <h2 className="text-lg font-bold text-white tracking-tight mb-6">Income vs Expense Summary</h2>
                       {filteredTransactions.length === 0 ? (
-                        <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-500">
-                          <span className="text-4xl block mb-2">📊</span>
-                          <p>No data found for this period.</p>
-                          <p className="text-xs text-gray-400 mt-1">Try changing filters or adding transactions.</p>
+                        <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-500 py-16 border border-dashed border-slate-800/80 rounded-2xl bg-slate-900/10">
+                          <span className="text-3xl block mb-2">📊</span>
+                          <p className="text-sm">No details found for this period.</p>
+                          <p className="text-3xs text-slate-650 mt-1">Try switching filters or logging data.</p>
                         </div>
                       ) : (
                         <div className="flex-1 relative min-h-[220px]">
@@ -308,13 +344,13 @@ const Reports = () => {
                   )}
 
                   {/* Detailed Category-wise Breakdown Table */}
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-                    <h2 className="text-xl font-bold text-gray-800 mb-6">Category Breakdown</h2>
+                  <div className="glass-panel p-6 rounded-2xl flex flex-col">
+                    <h2 className="text-lg font-bold text-white tracking-tight mb-6">Category Breakdown</h2>
                     
                     <div className="overflow-x-auto flex-1">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-gray-100 text-gray-400 text-xs font-semibold uppercase">
+                          <tr className="border-b border-slate-900 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                             <th className="pb-3 px-2 font-semibold">Category</th>
                             <th className="pb-3 px-2 font-semibold">Type</th>
                             <th className="pb-3 px-2 font-semibold text-right">Amount</th>
@@ -324,26 +360,28 @@ const Reports = () => {
                         <tbody>
                           {categoryBreakdown.length === 0 ? (
                             <tr>
-                              <td colSpan="4" className="py-12 text-center text-gray-500">
-                                <span className="text-2xl block mb-1">📋</span>
-                                No details available. Add transactions first.
+                              <td colSpan="4" className="py-16 text-center text-slate-500">
+                                <span className="text-3xl block mb-2">📋</span>
+                                No breakdown details available.
                               </td>
                             </tr>
                           ) : (
                             categoryBreakdown.map((item, idx) => (
-                              <tr key={idx} className="border-b border-gray-55 hover:bg-gray-50 transition duration-150">
-                                <td className="py-4 px-2 text-sm text-gray-700 font-semibold">{item.category}</td>
+                              <tr key={idx} className="border-b border-slate-900/50 hover:bg-slate-900/25 transition duration-150">
+                                <td className="py-4 px-2 text-sm text-slate-200 font-semibold">{item.category}</td>
                                 <td className="py-4 px-2">
-                                  <span className={`px-2 py-0.5 text-2xs font-bold rounded uppercase tracking-wider ${
-                                    item.type === 'income' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                                  <span className={`px-2.5 py-0.5 text-2xs font-bold rounded-lg uppercase tracking-wider border ${
+                                    item.type === 'income' 
+                                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                                      : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
                                   }`}>
                                     {item.type}
                                   </span>
                                 </td>
-                                <td className="py-4 px-2 text-sm font-semibold text-right text-gray-800">
+                                <td className="py-4 px-2 text-sm font-bold text-right text-slate-100">
                                   ₹{Number(item.amount).toFixed(2)}
                                 </td>
-                                <td className="py-4 px-2 text-sm text-gray-500 text-right font-medium">
+                                <td className="py-4 px-2 text-sm text-indigo-400 text-right font-bold">
                                   {Number(item.percentage).toFixed(1)}%
                                 </td>
                               </tr>
@@ -356,22 +394,22 @@ const Reports = () => {
                 </div>
 
                 {/* Net Summary Cards */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                  <h2 className="text-lg font-bold text-gray-800 mb-6">Financial Balance for this Period</h2>
+                <div className="glass-panel p-6 rounded-2xl">
+                  <h2 className="text-lg font-bold text-white tracking-tight mb-6">Financial Balance for this Period</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-green-50/50 rounded-lg p-5 border border-green-100/30 text-center">
-                      <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">Total Income</p>
-                      <p className="text-3xl font-extrabold text-green-650">₹{Number(totalIncome).toFixed(2)}</p>
+                    <div className="bg-emerald-500/5 rounded-xl p-5 border border-emerald-500/15 text-center">
+                      <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-1.5">Total Income</p>
+                      <p className="text-2xl font-black text-emerald-400">₹{Number(totalIncome).toFixed(2)}</p>
                     </div>
                     
-                    <div className="bg-red-50/50 rounded-lg p-5 border border-red-100/30 text-center">
-                      <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">Total Expenses</p>
-                      <p className="text-3xl font-extrabold text-red-650">₹{Number(totalExpenses).toFixed(2)}</p>
+                    <div className="bg-rose-500/5 rounded-xl p-5 border border-rose-500/15 text-center">
+                      <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-1.5">Total Expenses</p>
+                      <p className="text-2xl font-black text-rose-400">₹{Number(totalExpenses).toFixed(2)}</p>
                     </div>
 
-                    <div className={`${netSavings >= 0 ? 'bg-blue-50/50 border-blue-100/30' : 'bg-orange-50/50 border-orange-100/30'} rounded-lg p-5 border text-center`}>
-                      <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">Net Savings</p>
-                      <p className={`text-3xl font-extrabold ${netSavings >= 0 ? 'text-blue-650' : 'text-orange-655'}`}>
+                    <div className={`${netSavings >= 0 ? 'bg-indigo-500/5 border-indigo-500/15' : 'bg-amber-500/5 border-amber-500/15'} rounded-xl p-5 border text-center`}>
+                      <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-1.5">Net Savings</p>
+                      <p className={`text-2xl font-black ${netSavings >= 0 ? 'text-indigo-400' : 'text-amber-500'}`}>
                         ₹{Number(netSavings).toFixed(2)}
                       </p>
                     </div>
