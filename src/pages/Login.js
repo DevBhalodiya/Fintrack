@@ -14,7 +14,9 @@ const Login = () => {
   const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const { loginUser } = useContext(AuthContext);
+  const [showResend, setShowResend] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const { loginUser, resendVerificationEmail } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // Validation logic
@@ -71,6 +73,7 @@ const Login = () => {
     e.preventDefault();
     setApiError('');
     setSuccessMessage('');
+    setShowResend(false);
 
     if (!validateForm()) {
       return;
@@ -89,7 +92,10 @@ const Login = () => {
     } catch (err) {
       console.error('Login error:', err);
       let errorMessage = 'Login failed. Please try again.';
-      if (
+      if (err.code === 'auth/email-not-verified') {
+        errorMessage = err.message;
+        setShowResend(true);
+      } else if (
         err.code === 'auth/wrong-password' ||
         err.code === 'auth/user-not-found' ||
         err.code === 'auth/invalid-credential'
@@ -103,6 +109,28 @@ const Login = () => {
       setApiError(errorMessage);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    setResendLoading(true);
+    setApiError('');
+    setSuccessMessage('');
+    try {
+      await resendVerificationEmail(formData.email, formData.password);
+      setSuccessMessage('Verification email resent! Please check your inbox.');
+      setShowResend(false);
+    } catch (err) {
+      console.error('Resend verification error:', err);
+      let errMsg = 'Failed to resend verification email.';
+      if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        errMsg = 'Invalid password for resending verification.';
+      } else if (err.message) {
+        errMsg = err.message;
+      }
+      setApiError(errMsg);
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -126,9 +154,23 @@ const Login = () => {
 
         {/* API Error Message */}
         {apiError && (
-          <div className="mb-6 p-4 bg-rose-955/20 border-l-4 border-rose-500 text-rose-300 rounded-xl flex items-start text-sm backdrop-blur-sm">
-            <span className="mr-2.5 font-bold">⚠</span>
-            <span>{apiError}</span>
+          <div className="mb-6 p-4 bg-rose-955/20 border-l-4 border-rose-500 text-rose-300 rounded-xl backdrop-blur-sm">
+            <div className="flex items-start text-sm">
+              <span className="mr-2.5 font-bold">⚠</span>
+              <span>{apiError}</span>
+            </div>
+            {showResend && (
+              <div className="mt-3 pt-2 border-t border-rose-500/20 text-center">
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={resendLoading}
+                  className="text-xs text-indigo-400 hover:text-indigo-300 font-bold underline transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {resendLoading ? 'Resending verification email...' : 'Resend verification email'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 

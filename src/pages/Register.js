@@ -119,10 +119,10 @@ const Register = () => {
       // Call Firebase registerUser service
       await registerUser(formData.name, formData.email, formData.password);
 
-      setSuccessMessage('Registration successful! Redirecting to login...');
+      setSuccessMessage('Registration successful! A verification link has been sent to your email. Please check your inbox and verify your email before logging in.');
       setTimeout(() => {
         navigate('/login');
-      }, 1500);
+      }, 5000);
     } catch (err) {
       console.error('Registration error:', err);
       let errorMessage = 'Registration failed. Please try again.';
