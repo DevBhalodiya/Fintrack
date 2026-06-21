@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { AuthContext } from '../context/AuthContext';
 import { getTransactions } from '../services/transactionService';
+import { downloadPDFReport } from '../utils/pdfGenerator';
 
 // Import Chart.js components
 import { 
@@ -90,6 +91,24 @@ const Reports = () => {
     if (reportType === 'summary') return true;
     return t.type === reportType;
   });
+
+  const handleDownloadPDF = () => {
+    if (filteredTransactions.length === 0) return;
+    try {
+      downloadPDFReport({
+        transactions: filteredTransactions,
+        reportType,
+        timePeriod,
+        totalIncome,
+        totalExpenses,
+        netSavings,
+        userEmail: user?.email
+      });
+    } catch (err) {
+      console.error('Error generating PDF report:', err);
+      setError('Failed to generate PDF report.');
+    }
+  };
 
   // Calculate Metrics
   const totalIncome = filteredTransactions
@@ -248,10 +267,27 @@ const Reports = () => {
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
           
           <div className="max-w-7xl mx-auto relative z-10">
-            <h1 className="text-3xl font-extrabold text-white tracking-tight">Reports</h1>
-            <p className="text-slate-400 mt-1.5 text-sm mb-8">
-              Analyze your patterns, balance, and categorization distributions over time.
-            </p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+              <div>
+                <h1 className="text-3xl font-extrabold text-white tracking-tight">Reports</h1>
+                <p className="text-slate-400 mt-1.5 text-sm">
+                  Analyze your patterns, balance, and categorization distributions over time.
+                </p>
+              </div>
+              <div>
+                <button
+                  onClick={handleDownloadPDF}
+                  disabled={loading || filteredTransactions.length === 0}
+                  className={`inline-flex items-center space-x-2 bg-gradient-to-r from-indigo-650 to-violet-650 hover:from-indigo-600 hover:to-violet-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-300 cursor-pointer shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20 active:scale-95 border border-indigo-500/20 ${
+                    loading || filteredTransactions.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  title={filteredTransactions.length === 0 ? 'No transactions to export' : 'Export current report to PDF'}
+                >
+                  <span>📄</span>
+                  <span>Export PDF Report</span>
+                </button>
+              </div>
+            </div>
 
             {error && (
               <div className="mb-6 p-4 bg-rose-955/20 border-l-4 border-rose-500 text-rose-300 rounded-xl text-sm backdrop-blur-sm">
